@@ -258,6 +258,35 @@ def move_to(x, y, z, r):
          print("Move command failed.")
          return False
 
+def set_gripper(open_state):
+    """
+    Controls the Dobot Magician's gripper.
+    Args:
+        open_state (bool): True to open the gripper, False to close it.
+    """
+    if open_state:
+        print("Opening gripper...")
+        # Gripper ON (energized) usually means CLOSED for standard Dobot gripper.
+        # Gripper OFF (de-energized) usually means OPEN.
+        # So, to OPEN, we set 'on' to 0.
+        on_value = 0
+    else:
+        print("Closing gripper...")
+        # To CLOSE, we set 'on' to 1.
+        on_value = 1
+
+    # enableCtrl=1 means the firmware controls the gripper state.
+    if _execute_command(dType.SetEndEffectorGripper, enableCtrl=1, on=on_value):
+        # Add a small delay AFTER command completion confirmation, 
+        # as the physical action takes time.
+        dType.dSleep(700) # Wait 700ms for gripper action
+        print("Gripper command finished.")
+        return True
+    else:
+        print("Gripper command failed.")
+        return False
+    
+    
 def set_suction_cup(on_state):
     """
     Controls the Dobot Magician's SUCTION CUP. Waits for completion.
